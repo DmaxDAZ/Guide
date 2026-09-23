@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>พื้นฐานการเขียนเว็บ — คู่มือฉบับสมบูรณ์</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600;700&family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F5F7FA;
+    --paper-raised:#FFFFFF;
+    --ink:#16233D;
+    --ink-soft:#41506B;
+    --line:#D8DEE8;
+    --amber:#C97A0F;
+    --amber-soft:#FBF0DC;
+    --teal:#1F7A72;
+    --teal-soft:#E2F3F0;
+    --coral:#B7412F;
+    --coral-soft:#FBE8E4;
+    --code-bg:#101B30;
+    --code-text:#E7ECF7;
+    --shadow: 0 1px 0 rgba(22,35,61,0.06);
+    --radius: 3px;
+  }
+  :root:not([data-theme="light"]){
+    @media (prefers-color-scheme: dark){
+      --paper:#0F1522;
+      --paper-raised:#161F31;
+      --ink:#EAEEF6;
+      --ink-soft:#AEB8CC;
+      --line:#2A3550;
+      --amber:#E5A23B;
+      --amber-soft:#2B2312;
+      --teal:#4FBDB0;
+      --teal-soft:#122825;
+      --coral:#E17A63;
+      --coral-soft:#2D1712;
+      --code-bg:#0A1120;
+      --code-text:#E7ECF7;
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#0F1522;
+    --paper-raised:#161F31;
+    --ink:#EAEEF6;
+    --ink-soft:#AEB8CC;
+    --line:#2A3550;
+    --amber:#E5A23B;
+    --amber-soft:#2B2312;
+    --teal:#4FBDB0;
+    --teal-soft:#122825;
+    --coral:#E17A63;
+    --coral-soft:#2D1712;
+    --code-bg:#0A1120;
+    --code-text:#E7ECF7;
+  }
+
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'IBM Plex Sans Thai','IBM Plex Sans',sans-serif;
+    font-weight:400;
+    line-height:1.75;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3,h4{
+    font-family:'Chakra Petch','IBM Plex Sans Thai',sans-serif;
+    color:var(--ink);
+    line-height:1.25;
+    margin:0 0 .5em 0;
+  }
+  a{color:var(--teal);}
+  code, pre, .mono{font-family:'JetBrains Mono',monospace;}
+
+  /* ---------- HERO ---------- */
+  .hero{
+    position:relative;
+    padding:5.5rem 1.5rem 4rem;
+    background:
+      linear-gradient(var(--paper), var(--paper)),
+      repeating-linear-gradient(0deg, transparent, transparent 31px, var(--line) 32px),
+      repeating-linear-gradient(90deg, transparent, transparent 31px, var(--line) 32px);
+    background-blend-mode:normal, screen, screen;
+    opacity:1;
+    border-bottom:1px solid var(--line);
+    overflow:hidden;
+  }
+  [data-theme="dark"] .hero, :root:not([data-theme="light"]) .hero{
+    background-blend-mode:normal, overlay, overlay;
+  }
+  .hero-inner{max-width:920px;margin:0 auto;position:relative;}
+  .hero .tag{
+    display:inline-block;
+    font-family:'JetBrains Mono',monospace;
+    font-size:.8rem;
+    color:var(--teal);
+    background:var(--teal-soft);
+    padding:.3rem .7rem;
+    border-radius:2px;
+    margin-bottom:1.2rem;
+  }
+  .hero h1{
+    font-size:clamp(2.1rem, 5vw, 3.4rem);
+    font-weight:600;
+    max-width:14ch;
+  }
+  .hero p{
+    font-size:1.15rem;
+    color:var(--ink-soft);
+    max-width:56ch;
+    margin-top:1rem;
+  }
+  .hero .meta{
+    display:flex;
+    gap:1.5rem;
+    flex-wrap:wrap;
+    margin-top:2rem;
+    font-size:.9rem;
+    color:var(--ink-soft);
+  }
+  .hero .meta strong{color:var(--ink);font-family:'Chakra Petch',sans-serif;font-size:1.4rem;display:block;}
+
+  /* ---------- LAYOUT ---------- */
+  .layout{
+    max-width:1180px;
+    margin:0 auto;
+    display:grid;
+    grid-template-columns:260px 1fr;
+    gap:0;
+    align-items:start;
+  }
+  .toc{
+    position:sticky;
+    top:0;
+    max-height:100vh;
+    overflow-y:auto;
+    padding:2.5rem 1.25rem 3rem 1.5rem;
+    border-left:1px solid var(--line);
+  }
+  .toc-group{margin-bottom:1.6rem;}
+  .toc-group h4{
+    font-family:'JetBrains Mono',monospace;
+    font-size:.72rem;
+    color:var(--ink-soft);
+    font-weight:500;
+    margin-bottom:.6rem;
+    letter-spacing:.02em;
+  }
+  .toc a{
+    display:block;
+    color:var(--ink-soft);
+    text-decoration:none;
+    font-size:.92rem;
+    padding:.35rem 0;
+    border-right:2px solid transparent;
+    padding-right:.75rem;
+    transition:color .15s;
+  }
+  .toc a:hover, .toc a.active{color:var(--ink);border-right-color:var(--amber);}
+  .toc a .num{color:var(--amber);font-family:'JetBrains Mono',monospace;font-size:.78rem;margin-inline-end:.4rem;}
+
+  .content{padding:2.5rem 2rem 5rem;min-width:0;}
+  section.topic{
+    padding:2.75rem 0;
+    border-bottom:1px solid var(--line);
+    scroll-margin-top:1rem;
+  }
+  section.topic:last-of-type{border-bottom:none;}
+  .topic-head{display:flex;gap:1rem;align-items:baseline;margin-bottom:1rem;}
+  .topic-head .idx{
+    font-family:'JetBrains Mono',monospace;
+    color:var(--amber);
+    font-size:1rem;
+    font-weight:600;
+  }
+  .topic-head h2{font-size:1.65rem;font-weight:600;}
+  .lede{color:var(--ink-soft);font-size:1.05rem;max-width:68ch;margin-bottom:1.5rem;}
+  h3.sub{font-size:1.15rem;margin-top:2rem;font-weight:600;}
+  p, li{max-width:70ch;}
+  ul, ol{padding-inline-start:1.3rem;}
+  li{margin-bottom:.4rem;}
+
+  pre{
+    background:var(--code-bg);
+    color:var(--code-text);
+    padding:1.1rem 1.3rem;
+    border-radius:var(--radius);
+    overflow-x:auto;
+    font-size:.86rem;
+    line-height:1.6;
+    margin:1.1rem 0;
+    max-width:100%;
+  }
+  pre code{background:none;padding:0;color:inherit;}
+  :not(pre) > code{
+    background:var(--amber-soft);
+    color:var(--amber);
+    padding:.1rem .35rem;
+    border-radius:2px;
+    font-size:.85em;
+  }
+
+  .callout{
+    border-inline-start:3px solid var(--teal);
+    background:var(--teal-soft);
+    padding:1rem 1.2rem;
+    margin:1.3rem 0;
+    border-radius:0 var(--radius) var(--radius) 0;
+    font-size:.95rem;
+  }
+  .callout.warn{border-color:var(--coral);background:var(--coral-soft);}
+  .callout strong{display:block;margin-bottom:.3rem;font-family:'Chakra Petch',sans-serif;font-size:.95rem;}
+
+  table{
+    width:100%;
+    border-collapse:collapse;
+    margin:1.2rem 0;
+    font-size:.92rem;
+  }
+  th,td{
+    text-align:right;
+    padding:.6rem .8rem;
+    border-bottom:1px solid var(--line);
+  }
+  th{
+    font-family:'Chakra Petch',sans-serif;
+    color:var(--ink-soft);
+    font-weight:600;
+    font-size:.85rem;
+  }
+  tr:first-child th{border-top:1px solid var(--line);}
+  td code, th code{font-size:.82em;}
+
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:1.2rem;margin:1.2rem 0;}
+  .card{
+    border:1px solid var(--line);
+    background:var(--paper-raised);
+    padding:1.1rem 1.2rem;
+    border-radius:var(--radius);
+  }
+  .card h4{font-size:1rem;margin-bottom:.4rem;}
+  .card p{font-size:.9rem;color:var(--ink-soft);margin:0;}
+
+  .refs{padding:3.5rem 2rem 5rem;border-top:1px solid var(--line);}
+  .refs-inner{max-width:920px;margin:0 auto;}
+  .ref-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1rem;margin-top:1.5rem;}
+  .ref-item{
+    border:1px solid var(--line);
+    padding:1.1rem 1.2rem;
+    border-radius:var(--radius);
+    background:var(--paper-raised);
+  }
+  .ref-item a{font-family:'Chakra Petch',sans-serif;font-weight:600;font-size:1.02rem;text-decoration:none;}
+  .ref-item p{font-size:.87rem;color:var(--ink-soft);margin:.4rem 0 0;}
+
+  .menu-btn{
+    display:none;
+    position:fixed;
+    bottom:1.3rem;
+    inset-inline-end:1.3rem;
+    z-index:20;
+    background:var(--ink);
+    color:var(--paper);
+    border:none;
+    padding:.8rem 1.1rem;
+    border-radius:30px;
+    font-family:'JetBrains Mono',monospace;
+    font-size:.85rem;
+    box-shadow:0 4px 14px rgba(0,0,0,.25);
+  }
+
+  footer{
+    text-align:center;
+    padding:2.5rem 1rem 3.5rem;
+    color:var(--ink-soft);
+    font-size:.85rem;
+  }
+
+  @media (max-width:900px){
+    .layout{grid-template-columns:1fr;}
+    .toc{
+      position:fixed;
+      inset-block:0;
+      inset-inline-start:0;
+      width:82vw;
+      max-width:320px;
+      background:var(--paper);
+      border-left:none;
+      border-inline-end:1px solid var(--line);
+      transform:translateX(-105%);
+      transition:transform .25s ease;
+      z-index:30;
+      padding-top:4rem;
+    }
+    html[dir="rtl"] .toc{transform:translateX(105%);}
+    .toc.open{transform:translateX(0);}
+    .menu-btn{display:block;}
+    .grid2{grid-template-columns:1fr;}
+    .content{padding:2rem 1.25rem 4rem;}
+  }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-inner">
+    <span class="tag">คู่มืออ้างอิง · ปรับปรุงล่าสุด 2026</span>
+    <h1>พื้นฐานการเขียนเว็บ ตั้งแต่ศูนย์จนใช้งานได้จริง</h1>
+    <p>รวมความรู้พื้นฐานของการพัฒนาเว็บไซต์ทั้งสายที่มองเห็นได้ (Front-end) และสายเบื้องหลัง (Back-end) จัดเป็นหมวดหมู่ เรียงลำดับการเรียนรู้ พร้อมตัวอย่างโค้ดและแหล่งอ้างอิงที่เชื่อถือได้ เพื่อให้นำไปต่อยอดหรือสร้างเป็นเว็บไซต์ให้ความรู้ของตัวเองได้ทันที</p>
+    <div class="meta">
+      <div><strong>9</strong>หัวข้อหลัก</div>
+      <div><strong>30+</strong>หัวข้อย่อย</div>
+      <div><strong>4</strong>แหล่งอ้างอิงหลักระดับสากล</div>
+    </div>
+  </div>
+</div>
+
+<button class="menu-btn" id="menuBtn">☰ สารบัญ</button>
+
+<div class="layout">
+  <nav class="toc" id="toc">
+    <div class="toc-group">
+      <h4>ภาพรวม</h4>
+      <a href="#t1"><span class="num">01</span>เว็บทำงานอย่างไร</a>
+    </div>
+    <div class="toc-group">
+      <h4>สามเสาหลักฝั่งไคลเอนต์</h4>
+      <a href="#t2"><span class="num">02</span>HTML — โครงสร้างเนื้อหา</a>
+      <a href="#t3"><span class="num">03</span>CSS — การจัดรูปแบบ</a>
+      <a href="#t4"><span class="num">04</span>JavaScript — พฤติกรรม</a>
+    </div>
+    <div class="toc-group">
+      <h4>ทำให้ใช้งานได้จริง</h4>
+      <a href="#t5"><span class="num">05</span>Responsive & Mobile-first</a>
+      <a href="#t6"><span class="num">06</span>เครื่องมือของนักพัฒนา</a>
+      <a href="#t7"><span class="num">07</span>Front-end vs Back-end</a>
+    </div>
+    <div class="toc-group">
+      <h4>เผยแพร่และดูแลรักษา</h4>
+      <a href="#t8"><span class="num">08</span>Deploy เว็บไซต์</a>
+      <a href="#t9"><span class="num">09</span>Accessibility & SEO</a>
+    </div>
+    <div class="toc-group">
+      <h4>อ้างอิง</h4>
+      <a href="#refs"><span class="num">→</span>แหล่งเรียนรู้ที่เชื่อถือได้</a>
+    </div>
+  </nav>
+
+  <main class="content">
+
+    <section class="topic" id="t1">
+      <div class="topic-head"><span class="idx">01</span><h2>เว็บทำงานอย่างไร</h2></div>
+      <p class="lede">ก่อนเขียนโค้ดบรรทัดแรก ควรเข้าใจว่าเมื่อพิมพ์ชื่อเว็บไซต์แล้วกด Enter เกิดอะไรขึ้นบ้าง เพราะแนวคิดเหล่านี้เป็นรากฐานของทุกเรื่องที่ตามมา</p>
+
+      <h3 class="sub">Client–Server Model</h3>
+      <p>เว็บทำงานบนสถาปัตยกรรมแบบ <strong>ไคลเอนต์–เซิร์ฟเวอร์ (Client–Server)</strong> โดยเบราว์เซอร์ (Client) เป็นฝ่ายส่งคำขอ (Request) ไปยังเครื่องเซิร์ฟเวอร์ที่เก็บไฟล์เว็บไซต์ไว้ แล้วเซิร์ฟเวอร์จะประมวลผลและส่งคำตอบ (Response) กลับมา วงจรนี้เรียกว่า <strong>HTTP Request–Response Cycle</strong> และเป็นกลไกพื้นฐานที่สุดของเวิลด์ไวด์เว็บ</p>
+
+      <h3 class="sub">DNS และ URL</h3>
+      <p>ชื่อโดเมน เช่น <code>example.com</code> ที่มนุษย์จำง่าย จะถูกระบบ <strong>DNS (Domain Name System)</strong> แปลงเป็นหมายเลข IP ที่คอมพิวเตอร์ใช้สื่อสารกันจริง ๆ ส่วน URL (Uniform Resource Locator) คือที่อยู่เต็มรูปแบบของทรัพยากรบนเว็บ ประกอบด้วยโพรโทคอล โดเมน เส้นทาง (path) และพารามิเตอร์</p>
+      <pre><code>https://www.example.com/blog/web-basics?lang=th
+└─┬──┘   └──────┬──────┘└──────┬───────┘└───┬───┘
+โพรโทคอล      โดเมน           เส้นทาง        query string</code></pre>
+
+      <h3 class="sub">HTTP / HTTPS</h3>
+      <p>HTTP (HyperText Transfer Protocol) คือชุดกฎที่กำหนดรูปแบบการส่งคำขอและคำตอบระหว่างไคลเอนต์กับเซิร์ฟเวอร์ ส่วน HTTPS คือ HTTP ที่เข้ารหัสข้อมูลด้วย TLS/SSL ทำให้ข้อมูลระหว่างทางถูกดักอ่านได้ยากขึ้น ปัจจุบันเว็บไซต์แทบทุกแห่งควรใช้ HTTPS เป็นค่าเริ่มต้น</p>
+      <div class="grid2">
+        <div class="card"><h4>HTTP Methods ที่ใช้บ่อย</h4><p><code>GET</code> ขอข้อมูล · <code>POST</code> ส่งข้อมูลใหม่ · <code>PUT/PATCH</code> แก้ไขข้อมูล · <code>DELETE</code> ลบข้อมูล</p></div>
+        <div class="card"><h4>Status Code ที่พบบ่อย</h4><p><code>200</code> สำเร็จ · <code>301</code> ย้ายถาวร · <code>404</code> ไม่พบหน้า · <code>500</code> เซิร์ฟเวอร์ผิดพลาด</p></div>
+      </div>
+
+      <h3 class="sub">Browser Rendering Pipeline</h3>
+      <p>เมื่อเบราว์เซอร์ได้รับไฟล์ HTML จะนำไปสร้าง <strong>DOM (Document Object Model)</strong> จากนั้นอ่านไฟล์ CSS เพื่อสร้าง <strong>CSSOM</strong> รวมทั้งสองเข้าด้วยกันเป็น <strong>Render Tree</strong> คำนวณตำแหน่งและขนาด (Layout) แล้วจึงวาดผลลัพธ์ลงหน้าจอ (Paint) — เข้าใจลำดับนี้จะช่วยอธิบายได้ว่าทำไมการวาง <code>&lt;script&gt;</code> ผิดตำแหน่งถึงทำให้เว็บโหลดช้า</p>
+
+      <div class="callout"><strong>สรุปสั้น</strong>Domain → DNS แปลงเป็น IP → เบราว์เซอร์ส่ง HTTP Request → เซิร์ฟเวอร์ตอบกลับไฟล์ HTML/CSS/JS → เบราว์เซอร์แปลงเป็นหน้าเว็บที่มองเห็นได้</div>
+    </section>
+
+    <section class="topic" id="t2">
+      <div class="topic-head"><span class="idx">02</span><h2>HTML — โครงสร้างเนื้อหา</h2></div>
+      <p class="lede">HTML (HyperText Markup Language) ไม่ใช่ภาษาโปรแกรมมิ่ง แต่เป็นภาษา <strong>มาร์กอัป</strong> ที่ใช้กำหนดโครงสร้างและความหมายของเนื้อหาบนหน้าเว็บ</p>
+
+      <h3 class="sub">โครงสร้างเอกสารพื้นฐาน</h3>
+      <pre><code>&lt;!DOCTYPE html&gt;
+&lt;html lang="th"&gt;
+  &lt;head&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;title&gt;ชื่อหน้าเว็บ&lt;/title&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+    &lt;h1&gt;หัวข้อหลัก&lt;/h1&gt;
+    &lt;p&gt;ย่อหน้าเนื้อหา&lt;/p&gt;
+  &lt;/body&gt;
+&lt;/html&gt;</code></pre>
+      <p><code>&lt;!DOCTYPE html&gt;</code> บอกเบราว์เซอร์ว่าเอกสารนี้ใช้มาตรฐาน HTML5 ส่วน <code>&lt;head&gt;</code> เก็บข้อมูลที่ไม่แสดงผลโดยตรง เช่น ชื่อหน้า การเชื่อมไฟล์ CSS และ meta tag ต่าง ๆ ขณะที่ <code>&lt;body&gt;</code> คือเนื้อหาทั้งหมดที่ผู้ใช้มองเห็น</p>
+
+      <h3 class="sub">Element, Tag และ Attribute</h3>
+      <p>ทุก element ประกอบด้วย tag เปิด เนื้อหา และ tag ปิด เช่น <code>&lt;a href="#"&gt;ลิงก์&lt;/a&gt;</code> โดย <code>href</code> คือ attribute ที่ให้ข้อมูลเพิ่มเติมแก่ element นั้น element บางตัวไม่มีเนื้อหาและไม่ต้องปิด เรียกว่า void element เช่น <code>&lt;img&gt;</code>, <code>&lt;br&gt;</code>, <code>&lt;input&gt;</code></p>
+
+      <h3 class="sub">Semantic HTML — ทำไมสำคัญ</h3>
+      <p>แทนที่จะใช้ <code>&lt;div&gt;</code> ทุกจุด HTML5 มี element ที่สื่อความหมายในตัวเอง ช่วยทั้งด้าน SEO และการเข้าถึง (Accessibility) เพราะโปรแกรมอ่านหน้าจอและเสิร์ชเอนจินเข้าใจโครงสร้างได้ดีกว่า</p>
+      <table>
+        <tr><th>Element</th><th>ความหมาย</th></tr>
+        <tr><td><code>&lt;header&gt;</code></td><td>ส่วนหัวของหน้าหรือ section</td></tr>
+        <tr><td><code>&lt;nav&gt;</code></td><td>กลุ่มลิงก์นำทาง</td></tr>
+        <tr><td><code>&lt;main&gt;</code></td><td>เนื้อหาหลักของหน้า (มีได้หน้าละ 1 ครั้ง)</td></tr>
+        <tr><td><code>&lt;article&gt;</code></td><td>เนื้อหาที่แยกเป็นอิสระได้ เช่น บทความ, โพสต์</td></tr>
+        <tr><td><code>&lt;section&gt;</code></td><td>กลุ่มเนื้อหาที่เกี่ยวข้องกันภายใต้หัวข้อหนึ่ง</td></tr>
+        <tr><td><code>&lt;footer&gt;</code></td><td>ส่วนท้ายของหน้าหรือ section</td></tr>
+      </table>
+
+      <h3 class="sub">รายการ Element ที่ใช้บ่อยที่สุด</h3>
+      <ul>
+        <li><strong>ข้อความ:</strong> <code>h1</code>–<code>h6</code>, <code>p</code>, <code>span</code>, <code>strong</code>, <code>em</code></li>
+        <li><strong>ลิสต์:</strong> <code>ul</code>/<code>ol</code> คู่กับ <code>li</code></li>
+        <li><strong>สื่อ:</strong> <code>img</code>, <code>video</code>, <code>audio</code></li>
+        <li><strong>ลิงก์และตาราง:</strong> <code>a</code>, <code>table</code>/<code>tr</code>/<code>td</code></li>
+        <li><strong>ฟอร์ม:</strong> <code>form</code>, <code>input</code>, <code>label</code>, <code>select</code>, <code>button</code></li>
+      </ul>
+
+      <h3 class="sub">ฟอร์มเบื้องต้น</h3>
+      <pre><code>&lt;form action="/submit" method="post"&gt;
+  &lt;label for="email"&gt;อีเมล&lt;/label&gt;
+  &lt;input type="email" id="email" name="email" required&gt;
+  &lt;button type="submit"&gt;ส่งข้อมูล&lt;/button&gt;
+&lt;/form&gt;</code></pre>
+      <p>การผูก <code>label</code> กับ <code>input</code> ผ่าน <code>for</code>/<code>id</code> ไม่ใช่แค่ความสวยงาม แต่ช่วยให้ผู้ใช้โปรแกรมอ่านหน้าจอทราบว่ากล่องกรอกข้อมูลนี้คืออะไร</p>
+
+      <div class="callout warn"><strong>ข้อผิดพลาดที่พบบ่อย</strong>ใช้ <code>&lt;div&gt;</code> และ <code>&lt;span&gt;</code> แทนทุก element โดยไม่คำนึงถึงความหมาย ทำให้โครงสร้างอ่านยากและกระทบ SEO/Accessibility ในระยะยาว</div>
+    </section>
+
+    <section class="topic" id="t3">
+      <div class="topic-head"><span class="idx">03</span><h2>CSS — การจัดรูปแบบ</h2></div>
+      <p class="lede">CSS (Cascading Style Sheets) ควบคุมว่าเนื้อหาที่ HTML สร้างขึ้นจะแสดงผลอย่างไร ทั้งสี ระยะห่าง ตำแหน่ง และการตอบสนองต่อขนาดหน้าจอ</p>
+
+      <h3 class="sub">วิธีเชื่อม CSS เข้ากับ HTML</h3>
+      <pre><code>&lt;!-- แนะนำ: ไฟล์ภายนอก แยกจาก HTML --&gt;
+&lt;link rel="stylesheet" href="style.css"&gt;
+
+&lt;!-- ใช้ในหน้าเดียว --&gt;
+&lt;style&gt; p { color: navy; } &lt;/style&gt;
+
+&lt;!-- inline: หลีกเลี่ยงถ้าเป็นไปได้ --&gt;
+&lt;p style="color:navy"&gt;ข้อความ&lt;/p&gt;</code></pre>
+
+      <h3 class="sub">Selector พื้นฐาน</h3>
+      <pre><code>p { }            /* เลือกทุก &lt;p&gt; */
+.card { }        /* เลือกทุก element ที่มี class="card" */
+#nav { }         /* เลือก element ที่มี id="nav" */
+a:hover { }      /* สถานะเมื่อเมาส์ชี้ */
+.card > p { }    /* p ที่เป็นลูกโดยตรงของ .card */
+h2 + p { }       /* p ที่อยู่ถัดจาก h2 ทันที */</code></pre>
+
+      <h3 class="sub">Box Model — หัวใจของ Layout</h3>
+      <p>ทุก element บนหน้าเว็บถูกมองเป็นกล่องสี่เหลี่ยม ประกอบด้วย 4 ชั้นจากในสู่นอก: <strong>content</strong> → <strong>padding</strong> → <strong>border</strong> → <strong>margin</strong> การตั้งค่า <code>box-sizing: border-box;</code> ให้ padding และ border นับรวมอยู่ในความกว้างที่กำหนดไว้ ช่วยคำนวณขนาดได้ง่ายขึ้นมาก จนกลายเป็นค่ามาตรฐานที่โปรเจกต์ส่วนใหญ่ตั้งไว้ตั้งแต่ต้น</p>
+      <pre><code>* { box-sizing: border-box; }
+
+.box {
+  width: 300px;
+  padding: 20px;
+  border: 2px solid #333;
+  margin: 16px;
+}</code></pre>
+
+      <h3 class="sub">Flexbox — จัดเรียงแบบ 1 มิติ</h3>
+      <pre><code>.container {
+  display: flex;
+  justify-content: space-between; /* แนวหลัก */
+  align-items: center;            /* แนวขวาง */
+  gap: 1rem;
+}</code></pre>
+      <p>Flexbox เหมาะกับการจัดแถวเมนู การ์ดเรียงกัน หรือจัดกึ่งกลางแนวตั้ง/แนวนอนที่ทำได้ยากด้วยวิธีเก่า</p>
+
+      <h3 class="sub">CSS Grid — จัดเรียงแบบ 2 มิติ</h3>
+      <pre><code>.gallery {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}</code></pre>
+      <p>Grid เหมาะกับโครงหน้าเว็บทั้งหน้า เช่น sidebar + content หรือ gallery ที่ต้องควบคุมทั้งแถวและคอลัมน์พร้อมกัน</p>
+
+      <h3 class="sub">หน่วยวัดที่ควรรู้</h3>
+      <table>
+        <tr><th>หน่วย</th><th>ใช้เมื่อไร</th></tr>
+        <tr><td><code>px</code></td><td>ขนาดคงที่ ไม่ยืดหยุ่นตามบริบท</td></tr>
+        <tr><td><code>%</code></td><td>สัดส่วนเทียบกับ parent element</td></tr>
+        <tr><td><code>em</code></td><td>เทียบกับขนาดฟอนต์ของ element นั้นเอง</td></tr>
+        <tr><td><code>rem</code></td><td>เทียบกับขนาดฟอนต์ของ <code>html</code> — นิยมใช้เพื่อความสม่ำเสมอ</td></tr>
+        <tr><td><code>vw / vh</code></td><td>สัดส่วนของความกว้าง/สูงหน้าจอ</td></tr>
+      </table>
+
+      <div class="callout"><strong>Specificity ควรรู้</strong>เมื่อกฎ CSS ขัดกัน เบราว์เซอร์เลือกใช้กฎที่ "จำเพาะเจาะจง" ที่สุด เรียงจากน้อยไปมากคือ element selector → class → id → inline style ส่วน <code>!important</code> จะแทนที่ทุกอย่าง จึงควรใช้ให้น้อยที่สุด</div>
+    </section>
+
+    <section class="topic" id="t4">
+      <div class="topic-head"><span class="idx">04</span><h2>JavaScript — พฤติกรรมและการโต้ตอบ</h2></div>
+      <p class="lede">ถ้า HTML คือโครงกระดูกและ CSS คือรูปลักษณ์ JavaScript ก็คือระบบประสาทที่ทำให้หน้าเว็บตอบสนองต่อผู้ใช้ได้</p>
+
+      <h3 class="sub">การเชื่อม JavaScript เข้ากับหน้าเว็บ</h3>
+      <pre><code>&lt;!-- แนะนำ: วางก่อนปิด &lt;/body&gt; หรือใส่ defer --&gt;
+&lt;script src="app.js" defer&gt;&lt;/script&gt;</code></pre>
+      <p>แอตทริบิวต์ <code>defer</code> บอกให้เบราว์เซอร์โหลดไฟล์ไปพร้อมกับ HTML แต่รันสคริปต์หลังจากสร้าง DOM เสร็จแล้ว ช่วยไม่ให้หน้าเว็บค้างระหว่างโหลด</p>
+
+      <h3 class="sub">ตัวแปรและชนิดข้อมูลพื้นฐาน</h3>
+      <pre><code>let count = 0;              // เปลี่ยนค่าได้
+const name = "เว็บของฉัน";   // ห้ามเปลี่ยนค่าใหม่
+
+const isReady = true;       // boolean
+const price = 129.5;        // number
+const tags = ["html","css"];// array
+const user = { name, age: 25 }; // object</code></pre>
+
+      <h3 class="sub">ฟังก์ชันและ Arrow Function</h3>
+      <pre><code>function add(a, b) {
+  return a + b;
+}
+
+const multiply = (a, b) => a * b;</code></pre>
+
+      <h3 class="sub">DOM Manipulation</h3>
+      <p><strong>DOM (Document Object Model)</strong> คือโครงสร้างข้อมูลของหน้า HTML ที่ JavaScript สามารถเข้าถึงและเปลี่ยนแปลงได้แบบ real-time</p>
+      <pre><code>const button = document.querySelector("#submit");
+const message = document.querySelector(".message");
+
+button.addEventListener("click", () => {
+  message.textContent = "ส่งข้อมูลเรียบร้อยแล้ว";
+  message.classList.add("success");
+});</code></pre>
+
+      <h3 class="sub">การจัดการงานแบบ Asynchronous</h3>
+      <p>เมื่อเว็บต้องขอข้อมูลจากเซิร์ฟเวอร์โดยไม่ให้หน้าเว็บค้าง จะใช้รูปแบบ asynchronous ผ่าน <code>fetch</code> ร่วมกับ <code>async/await</code></p>
+      <pre><code>async function loadPosts() {
+  const response = await fetch("/api/posts");
+  const posts = await response.json();
+  console.log(posts);
+}</code></pre>
+
+      <h3 class="sub">แนวคิดสำคัญที่ควรเรียนต่อ</h3>
+      <ul>
+        <li><strong>Event Loop</strong> — กลไกที่ทำให้ JavaScript ทำงานแบบ single-threaded แต่จัดการงานพร้อมกันได้</li>
+        <li><strong>Closures & Scope</strong> — ขอบเขตการมองเห็นของตัวแปร</li>
+        <li><strong>ES Modules</strong> (<code>import</code>/<code>export</code>) — แบ่งโค้ดเป็นไฟล์ย่อยที่จัดการง่าย</li>
+      </ul>
+
+      <div class="callout warn"><strong>ระวัง</strong>โค้ด JavaScript ที่รันในเบราว์เซอร์ผู้ใช้ทุกคนมองเห็นได้ ห้ามฝัง API key หรือข้อมูลลับไว้ในสคริปต์ฝั่ง client เด็ดขาด</div>
+    </section>
+
+    <section class="topic" id="t5">
+      <div class="topic-head"><span class="idx">05</span><h2>Responsive & Mobile-first Design</h2></div>
+      <p class="lede">ผู้ใช้เข้าเว็บจากหน้าจอหลากหลายขนาด ตั้งแต่มือถือจนถึงจอมอนิเตอร์ใหญ่ เว็บที่ดีต้องปรับตัวได้กับทุกขนาด</p>
+
+      <h3 class="sub">Meta Viewport — จุดเริ่มต้นที่มักถูกลืม</h3>
+      <pre><code>&lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;</code></pre>
+      <p>หากไม่มีบรรทัดนี้ มือถือจะแสดงหน้าเว็บโดยย่อทั้งหน้าให้พอดีจอ ทำให้ตัวอักษรเล็กจนอ่านไม่ออก</p>
+
+      <h3 class="sub">Media Query</h3>
+      <pre><code>.container { padding: 1rem; }
+
+@media (min-width: 768px) {
+  .container { padding: 2rem; }
+}
+
+@media (min-width: 1200px) {
+  .container { padding: 3rem; max-width: 1100px; margin: 0 auto; }
+}</code></pre>
+      <p>แนวทาง <strong>Mobile-first</strong> คือเขียน CSS สำหรับหน้าจอเล็กสุดก่อน แล้วค่อยเพิ่มกฎสำหรับหน้าจอที่ใหญ่ขึ้นด้วย <code>min-width</code> ทำให้เว็บเบาและควบคุมง่ายกว่าการเขียนกลับด้าน</p>
+
+      <h3 class="sub">รูปภาพที่ตอบสนองต่อขนาดจอ</h3>
+      <pre><code>img { max-width: 100%; height: auto; display: block; }</code></pre>
+
+      <div class="callout"><strong>Breakpoint ที่นิยมใช้อ้างอิง</strong>มือถือ &lt; 600px · แท็บเล็ต 600–1024px · เดสก์ท็อป &gt; 1024px — ตัวเลขจริงควรปรับตามเนื้อหา ไม่ใช่ยึดตายตัว</div>
+    </section>
+
+    <section class="topic" id="t6">
+      <div class="topic-head"><span class="idx">06</span><h2>เครื่องมือของนักพัฒนา</h2></div>
+      <p class="lede">การเขียนเว็บในปัจจุบันอาศัยเครื่องมือรอบตัวหลายอย่างที่ช่วยให้ทำงานเร็วและตรวจจับข้อผิดพลาดได้ไว</p>
+
+      <div class="grid2">
+        <div class="card"><h4>Code Editor</h4><p>เช่น Visual Studio Code — มี extension ช่วยไฮไลต์ไวยากรณ์ เติมโค้ดอัตโนมัติ และเชื่อมกับ Git ในตัว</p></div>
+        <div class="card"><h4>Browser DevTools</h4><p>กด F12 เพื่อดู DOM ที่เรนเดอร์จริง ตรวจ Console หา error และดู Network tab เพื่อวิเคราะห์ความเร็วโหลด</p></div>
+        <div class="card"><h4>Git & GitHub</h4><p>ระบบควบคุมเวอร์ชันที่บันทึกประวัติการแก้โค้ด ทำงานร่วมกับผู้อื่นได้โดยไม่ทับไฟล์กัน</p></div>
+        <div class="card"><h4>Package Manager</h4><p>เช่น npm หรือ pnpm ใช้ติดตั้งและจัดการไลบรารีของ JavaScript ที่โปรเจกต์ต้องพึ่งพา</p></div>
+      </div>
+
+      <h3 class="sub">คำสั่ง Git ที่ใช้บ่อยที่สุด</h3>
+      <pre><code>git init                     # เริ่มโปรเจกต์ git ใหม่
+git add .                    # เตรียมไฟล์ที่แก้ไขทั้งหมด
+git commit -m "เพิ่มหน้าแรก"   # บันทึกการเปลี่ยนแปลง
+git push origin main         # ส่งขึ้น GitHub</code></pre>
+    </section>
+
+    <section class="topic" id="t7">
+      <div class="topic-head"><span class="idx">07</span><h2>Front-end กับ Back-end ต่างกันอย่างไร</h2></div>
+      <p class="lede">เมื่อเข้าใจ HTML/CSS/JS แล้ว ขั้นต่อไปคือมองภาพรวมว่างานพัฒนาเว็บแบ่งออกเป็นสองฝั่งหลัก</p>
+
+      <table>
+        <tr><th></th><th>Front-end</th><th>Back-end</th></tr>
+        <tr><td>ทำงานที่ไหน</td><td>เบราว์เซอร์ของผู้ใช้</td><td>เซิร์ฟเวอร์</td></tr>
+        <tr><td>รับผิดชอบ</td><td>สิ่งที่ผู้ใช้เห็นและโต้ตอบด้วย</td><td>ข้อมูล ตรรกะธุรกิจ ความปลอดภัย</td></tr>
+        <tr><td>ภาษา/เครื่องมือทั่วไป</td><td>HTML, CSS, JavaScript, React, Vue</td><td>Node.js, Python, PHP, Java, ฐานข้อมูล</td></tr>
+        <tr><td>สื่อสารกันด้วย</td><td colspan="2">API (มักอยู่ในรูปแบบ REST หรือ GraphQL ส่งข้อมูลเป็น JSON)</td></tr>
+      </table>
+
+      <h3 class="sub">Framework และ Library ที่ควรรู้จักชื่อไว้</h3>
+      <ul>
+        <li><strong>Front-end framework:</strong> React, Vue, Svelte — ช่วยจัดการ UI ที่ซับซ้อนด้วยแนวคิด component</li>
+        <li><strong>Back-end runtime/framework:</strong> Node.js + Express, Django (Python), Laravel (PHP)</li>
+        <li><strong>ฐานข้อมูล:</strong> MySQL/PostgreSQL (เชิงตาราง) และ MongoDB (เชิงเอกสาร)</li>
+      </ul>
+      <div class="callout"><strong>คำแนะนำการเรียงลำดับการเรียน</strong>ควรเชี่ยวชาญ HTML, CSS, JavaScript แบบล้วน (vanilla) ให้แน่นก่อน แล้วค่อยเรียน framework — เพราะ framework ล้วนสร้างอยู่บนพื้นฐานเดียวกันนี้ทั้งหมด</div>
+    </section>
+
+    <section class="topic" id="t8">
+      <div class="topic-head"><span class="idx">08</span><h2>การ Deploy เว็บไซต์ให้ใช้งานจริง</h2></div>
+      <p class="lede">เมื่อเขียนเว็บเสร็จในเครื่องตัวเอง ขั้นตอนสุดท้ายคือนำขึ้นสู่อินเทอร์เน็ตให้คนอื่นเข้าถึงได้</p>
+
+      <h3 class="sub">องค์ประกอบที่ต้องมี</h3>
+      <ul>
+        <li><strong>Domain name</strong> — ชื่อที่จดทะเบียนไว้ เช่น ผ่านผู้ให้บริการจดโดเมน</li>
+        <li><strong>Hosting/Server</strong> — เครื่องที่เก็บไฟล์เว็บไซต์และตอบ HTTP request</li>
+        <li><strong>DNS records</strong> — เชื่อมโดเมนเข้ากับ IP ของ hosting</li>
+        <li><strong>SSL Certificate</strong> — เปิดใช้ HTTPS (ผู้ให้บริการยุคใหม่ส่วนมากทำให้ฟรีและอัตโนมัติ)</li>
+      </ul>
+
+      <h3 class="sub">ทางเลือกยอดนิยมสำหรับผู้เริ่มต้น</h3>
+      <div class="grid2">
+        <div class="card"><h4>เว็บไซต์แบบ Static</h4><p>GitHub Pages, Netlify, Vercel — เหมาะกับ HTML/CSS/JS ล้วน หรือเว็บที่ build ด้วย React/Vue มีระดับฟรีให้ใช้งาน</p></div>
+        <div class="card"><h4>เว็บไซต์ที่มี Back-end</h4><p>Render, Railway หรือ VPS (เช่น DigitalOcean) — เหมาะกับเว็บที่ต้องรันเซิร์ฟเวอร์และเชื่อมฐานข้อมูล</p></div>
+      </div>
+    </section>
+
+    <section class="topic" id="t9">
+      <div class="topic-head"><span class="idx">09</span><h2>Accessibility และ SEO เบื้องต้น</h2></div>
+      <p class="lede">เว็บที่ดีต้องเข้าถึงได้สำหรับทุกคน และค้นเจอได้ง่ายบนเสิร์ชเอนจิน สองเรื่องนี้เชื่อมโยงกับพื้นฐานที่กล่าวมาทั้งหมดโดยตรง</p>
+
+      <h3 class="sub">หลักการ Accessibility (a11y) เบื้องต้น</h3>
+      <ul>
+        <li>ใช้ semantic HTML แทนการยัด <code>div</code> ทุกอย่าง</li>
+        <li>ใส่ <code>alt</code> ให้รูปภาพเสมอ เพื่อให้โปรแกรมอ่านหน้าจอบรรยายภาพได้</li>
+        <li>ตรวจสอบว่าใช้เมาส์ไม่ได้ก็ยังกด Tab ไปยังทุกปุ่ม/ลิงก์ได้ครบ</li>
+        <li>เลือกคู่สีตัวอักษร/พื้นหลังที่มีความต่างของความสว่างเพียงพอ (contrast)</li>
+      </ul>
+
+      <h3 class="sub">พื้นฐาน SEO ที่ควบคุมได้จากโค้ด</h3>
+      <pre><code>&lt;title&gt;ชื่อหน้าที่สื่อความหมายชัดเจน&lt;/title&gt;
+&lt;meta name="description" content="สรุปเนื้อหาของหน้านี้สั้น ๆ"&gt;
+&lt;h1&gt;มีหัวข้อหลักเพียงหนึ่งเดียวต่อหน้า&lt;/h1&gt;</code></pre>
+      <p>เสิร์ชเอนจินให้ความสำคัญกับโครงสร้างที่ชัดเจน ความเร็วในการโหลด และการรองรับมือถือ — ซึ่งล้วนเป็นผลพลอยได้จากการเขียน HTML/CSS ที่ถูกต้องตามหัวข้อก่อนหน้าทั้งหมด</p>
+
+      <div class="callout"><strong>เชื่อมโยงกัน</strong>Semantic HTML (หัวข้อ 2) + Responsive Design (หัวข้อ 5) + ความเร็วในการโหลด คือสามเสาหลักที่ทั้ง Accessibility และ SEO ต้องการร่วมกัน</div>
+    </section>
+
+  </main>
+</div>
+
+<div class="refs" id="refs">
+  <div class="refs-inner">
+    <div class="topic-head"><h2>แหล่งเรียนรู้และอ้างอิงที่เชื่อถือได้</h2></div>
+    <p class="lede">เนื้อหาในคู่มือนี้สรุปจากแนวคิดพื้นฐานที่ได้รับการยอมรับในอุตสาหกรรม แนะนำให้ศึกษาเพิ่มเติมจากแหล่งต้นทางต่อไปนี้โดยตรง เพื่อความถูกต้องและทันสมัยที่สุด</p>
+    <div class="ref-list">
+      <div class="ref-item">
+        <a href="https://developer.mozilla.org/en-US/docs/Learn_web_development" target="_blank" rel="noopener">MDN Web Docs — Learn Web Development</a>
+        <p>เอกสารอ้างอิงที่นักพัฒนาเว็บทั่วโลกไว้วางใจมากที่สุด ดูแลโดย Mozilla ร่วมกับชุมชน Open Web Docs ครอบคลุม HTML, CSS, JavaScript และ Web API อย่างละเอียด</p>
+      </div>
+      <div class="ref-item">
+        <a href="https://web.dev/" target="_blank" rel="noopener">web.dev by Google</a>
+        <p>แนวทางปฏิบัติที่ดีด้านประสิทธิภาพ การเข้าถึง และมาตรฐานเว็บสมัยใหม่ จากทีม Chrome ของ Google</p>
+      </div>
+      <div class="ref-item">
+        <a href="https://www.w3.org/standards/webdesign/" target="_blank" rel="noopener">W3C — World Wide Web Consortium</a>
+        <p>องค์กรผู้กำหนดมาตรฐานอย่างเป็นทางการของเว็บ รวมถึงข้อกำหนดด้าน HTML, CSS และ Web Accessibility (WCAG)</p>
+      </div>
+      <div class="ref-item">
+        <a href="https://www.freecodecamp.org/" target="_blank" rel="noopener">freeCodeCamp</a>
+        <p>หลักสูตรออนไลน์ฟรีแบบลงมือปฏิบัติจริง เหมาะสำหรับฝึกเขียนโค้ดควบคู่กับการอ่านทฤษฎี</p>
+      </div>
+      <div class="ref-item">
+        <a href="https://www.w3schools.com/" target="_blank" rel="noopener">W3Schools</a>
+        <p>อ้างอิงไวยากรณ์และตัวอย่างโค้ดที่เข้าใจง่าย เหมาะสำหรับเปิดดูเร็ว ๆ ระหว่างเขียนโค้ด</p>
+      </div>
+      <div class="ref-item">
+        <a href="https://caniuse.com/" target="_blank" rel="noopener">Can I use</a>
+        <p>ตรวจสอบว่าฟีเจอร์ HTML/CSS/JS แต่ละตัวรองรับในเบราว์เซอร์เวอร์ชันใดบ้าง ก่อนนำไปใช้งานจริง</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>คู่มือนี้จัดทำขึ้นเพื่อการศึกษา สรุปแนวคิดพื้นฐานของการพัฒนาเว็บ — โปรดอ้างอิงแหล่งที่มาด้านบนสำหรับรายละเอียดเชิงลึกและความเปลี่ยนแปลงล่าสุด</footer>
+
+<script>
+  const menuBtn = document.getElementById('menuBtn');
+  const toc = document.getElementById('toc');
+  menuBtn.addEventListener('click', () => toc.classList.toggle('open'));
+  toc.querySelectorAll('a').forEach(a => a.addEventListener('click', () => toc.classList.remove('open')));
+
+  const links = Array.from(document.querySelectorAll('.toc a'));
+  const sections = links.map(l => document.querySelector(l.getAttribute('href'))).filter(Boolean);
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      const id = '#' + entry.target.id;
+      const link = links.find(l => l.getAttribute('href') === id);
+      if (!link) return;
+      if (entry.isIntersecting) {
+        links.forEach(l => l.classList.remove('active'));
+        link.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-20% 0px -70% 0px' });
+  sections.forEach(s => observer.observe(s));
+</script>
+</body>
+</html>
